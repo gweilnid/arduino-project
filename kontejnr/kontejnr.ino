@@ -30,6 +30,7 @@ Keypad keypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
 char key = keypad.getKey();
 float  duration;
 float  distance;
+bool open;
 
 void setup(){     
   servo1.attach(2); 
@@ -38,6 +39,8 @@ void setup(){
   pinMode(echo, INPUT);
   Serial.begin(9600);
   lcd.begin(16, 2);
+  
+  
 }
   
 void loop(){
@@ -46,15 +49,18 @@ void loop(){
   display_distance();
   
   
-  if (distance<40 ){
+  
+  if (!open && distance<40 ){
+    open = true;
     openservo();
-    delay(500);
-    closeservo();
-    delay(500);
-    kompresor();
+    closekompresor();
+    delay(3000) ; 
   }
-  else{
+
+  if (distance>40 ){
     closeservo();
+    delay(3000) ;
+    openkompresor();
   }
 
 }
@@ -83,18 +89,24 @@ void time_Measurement()
    }
 
 void openservo(){
-servo1.write(175); // servoyu 175 derece açısına getirdik
-    Serial.println(distance);  //mesaye değerini seri ekrana yazdırdık
-    Serial.println("Open");  //serial ekrandan okuduk
-    delay(3000) ;  // 3 saniye bekle
+servo1.write(0); 
+    Serial.println(distance);  
+    Serial.println("Open");
+    open = false;
+    delay(5000) ; 
+    
 }
 void closeservo(){
-  servo1.write(70); // servoyu 70 derece açısına getirdik.
+  servo1.write(90); 
     Serial.println(distance);
-    Serial.println("Closed"); //serial ekrandan okuduk
+    Serial.println("Closed"); 
 }
-void kompresor(){
-  servo2.write(175);
-  delay(500);
-  servo2.write(70);
+void openkompresor(){
+  servo2.write(0);
+  delay(1000);
+}
+
+void closekompresor(){
+  servo2.write(90);
+    delay(5000) ;
 }
