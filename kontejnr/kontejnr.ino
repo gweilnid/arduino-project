@@ -1,9 +1,8 @@
-#include <Keypad.h>
 #include <LiquidCrystal.h> //LCD library
 #include<Servo.h> 
 
-#define echo 4
-#define trig 5
+#define echo 18
+#define trig 17
 
 Servo servo1;
 Servo servo2;
@@ -14,27 +13,15 @@ int valorsensor;
 const int rs = 8, en = 9, d4 = 10, d5 = 11, d6 = 12, d7 = 13;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
-const byte ROWS = 4; //four rows
-const byte COLS = 4; //three columns
-char keys[ROWS][COLS] = {
-  {'1','2','3','A'},
-  {'4','5','6','B'},
-  {'7','8','9','C'},
-  {'*','0','#','D'}
-};
-
-byte rowPins[ROWS] = {7,6,5,4}; 
-byte colPins[COLS] = {3,2,1,0} ; 
-
-Keypad keypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
-char key = keypad.getKey();
 float  duration;
 float  distance;
 bool open;
+int plnost=0;
+bool zavreno;
 
 void setup(){     
-  servo1.attach(2); 
-  servo2.attach(7);
+  servo1.attach(15);  
+  servo2.attach(16);
   pinMode(trig, OUTPUT);
   pinMode(echo, INPUT);
   Serial.begin(9600);
@@ -44,26 +31,29 @@ void setup(){
 }
   
 void loop(){
- time_Measurement();
+  
+  time_Measurement();
   distance = duration * (0.0343) / 2;
-  display_distance();
+ // display_distance();
+  valorsensor = analogRead(QRD);
+  Serial.println(valorsensor);
+
   
-  
-  
-  if (!open && distance<40 ){
+  if (valorsensor !=595 && !open && distance<40 ){
     open = true;
     openservo();
     closekompresor();
     delay(3000) ; 
   }
-
-  if (distance>40 ){
+  else{
     closeservo();
     delay(3000) ;
     openkompresor();
   }
 
 }
+
+
 void time_Measurement()
   { //function to measure the time taken by the pulse to return back
     digitalWrite(trig, LOW);
