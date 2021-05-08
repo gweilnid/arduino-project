@@ -23,26 +23,25 @@ char key[rows][columns] =
 byte pinRows[rows] = {7, 6, 5, 4}; 
 byte pinColumns[columns] = {3, 2, 1, 0}; 
 Keypad keypad = Keypad( makeKeymap(key), pinRows, pinColumns, rows, columns );
-int pos1=0, pos2=0, pos3=0, pos4=0;
+int pos1, pos2, pos3, pos4;
 int fotorezistor;
 float  duration;
 float  distance;
 bool open;
-
 
 void setup(){     
   lid.attach(15); 
   compress.attach(16);
   pinMode(trig, OUTPUT);
   pinMode(echo, INPUT);
-  Serial.begin(9600);
+//  Serial.begin(9600);
   lcd.begin(16, 2); 
   
 }
   
 void loop(){
   fotorezistor = analogRead(A0);
-  Serial.println(fotorezistor);
+ // Serial.println(fotorezistor);
   
  if(fotorezistor==595){
   password();
@@ -70,10 +69,10 @@ void time_Measurement(){ //function to measure the time taken by the pulse to re
   { //function to display the distance on LCD/Serial Monitor
     lcd.clear();
     lcd.setCursor(0, 0);
-    Serial.print("Distance in Cm: ");
+ /*   Serial.print("Distance in Cm: ");
     Serial.print(distance);
     Serial.println();
-    lcd.print("Distance in Cm: ");
+    lcd.print("Distance in Cm: ");*/
     lcd.setCursor(5, 1);
     lcd.print(distance);
     delay(1000);
@@ -96,7 +95,7 @@ void container_lid(){
     delay(3000) ;
     closecompressor();
   }
-  delay(3000);
+ // delay(3000);
 } 
 
 void openservo(){
@@ -154,10 +153,8 @@ void capacity(){
 }
 
 void password(){
-  
- 
-   int digit1=1,digit2=5,digit3=7,digit4=8;
-  
+   
+  int digit1=1,digit2=5,digit3=7,digit4=8;
    lcd.setCursor(0,1);
    lcd.print("        ");
    char key = keypad.getKey();
@@ -165,6 +162,7 @@ void password(){
     Serial.println(key);
    lcd.setCursor(8+pointer,1);
    lcd.print(key);
+  // lcd.print("*");
    lcd.setCursor(8+pointer,1);
    key=key-48;
    pointer++; 
@@ -180,7 +178,7 @@ void password(){
     break;
     case 4:
     pos4=key;
-   delay(100);
+   delay(50);
   if(pos1==digit1 && pos2==digit2 && pos3==digit3 && pos4==digit4){
     lcd.clear();
     lcd.setCursor(4,0);
